@@ -6,6 +6,7 @@ import { themeLight, themeDark } from "../styles";
 const CustomThemeProvider = ({ children }) => {
   const [isThemeDark, setIsThemeDark] = useState(false);
 
+  //Set the dark theme if the user prefers it.
   useLayoutEffect(() => {
     if (window.matchMedia("(prefers-color-scheme: dark)")?.matches)
       setIsThemeDark(true);
