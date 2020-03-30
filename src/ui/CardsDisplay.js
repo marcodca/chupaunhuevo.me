@@ -1,10 +1,11 @@
-import React, { useReducer, useEffect, useLayoutEffect, useRef } from "react"
+import React, { useReducer, useLayoutEffect, useRef } from "react"
 import useLocalStorage from "./hooks/useLocalStorage"
 import move from "array-move"
 import findIndex from "./utils/findIndex"
-import AddNewCard from './AddNewCard'
+import AddNewCard from "./AddNewCard"
 import Card from "./Card"
 import styled from "styled-components"
+import { AnimatePresence } from "framer-motion"
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -20,55 +21,53 @@ const reducer = (state, action) => {
 }
 
 const CardsDisplay = () => {
-  const [cardsData, setCardsData] = useLocalStorage("cardsData", [])
-  const [state, dispatch] = useReducer(reducer, cardsData)
+  const [cardsLocalData, setCardsLocalData] = useLocalStorage(
+    "cardsLocalData",
+    []
+  )
+  //cards is gonna be our component array of cards
+  const [cards, dispatch] = useReducer(reducer, cardsLocalData)
 
+  //Each time our component state changes, we make the corresponding update to local storage
   useLayoutEffect(() => {
-    setCardsData(state)
-  }, [state])
+    setCardsLocalData(cards)
+  }, [cards])
 
   const positions = useRef([]).current
-  console.log(positions)
+
   const setPosition = (i, offset) => (positions[i] = offset)
+
   const moveItem = (i, dragOffset) => {
     const targetIndex = findIndex(i, dragOffset, positions)
     if (targetIndex !== i)
       dispatch({
         type: "rearrange-cards",
-        payload: move(state, i, targetIndex),
+        payload: move(cards, i, targetIndex),
       })
   }
 
   return (
-    <div>
-      <AddNewCard dispatch={dispatch} hasCards={!!state.length} />
-      {!state.length ? (
+    <>
+      <AddNewCard dispatch={dispatch} hasCards={!!cards.length} />
+      {!cards.length ? (
         <NoCardsMessage />
       ) : (
-        <Ul>
-          {state.map((el, i) => (
-            <Card
-              key={el.id}
-              i={i}
-              setPosition={setPosition}
-              moveItem={moveItem}
-            >
-              {el.title}
-              <br />
-              Top: {i + 1}
-              <br />
-              <button
-                onClick={() => {
-                  dispatch({ type: "delete-card", payload: el.id })
-                }}
-              >
-                Click
-              </button>
-            </Card>
-          ))}
-        </Ul>
+        <CardsContainer>
+          <AnimatePresence>
+            {cards.map((card, i) => (
+              <Card
+                dispatch={dispatch}
+                key={card.id}
+                i={i}
+                setPosition={setPosition}
+                moveItem={moveItem}
+                content={card}
+              />
+            ))}
+          </AnimatePresence>
+        </CardsContainer>
       )}
-    </div>
+    </>
   )
 }
 
@@ -86,10 +85,9 @@ const NoCardsText = styled.p`
     font-weight: 700;
   }
 `
-
-const Ul = styled.ul`
+const CardsContainer = styled.ul`
   list-style: none;
-  padding: 0;
+  padding: var(--space-lg) 0;
   margin: 0;
   position: relative;
 `

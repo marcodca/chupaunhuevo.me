@@ -3,7 +3,9 @@ import { motion, useMotionValue } from "framer-motion"
 import chroma from "chroma-js"
 import styled from "styled-components"
 
-const Card = ({ color, setPosition, moveItem, i, children }) => {
+//As shown in framer-motion official example: https://codesandbox.io/s/framer-motion-drag-to-reorder-pkm1k
+
+const Card = ({ setPosition, moveItem, i, content, dispatch }) => {
   const [isDragging, setDragging] = useState(false)
 
   // We'll use a `ref` to access the DOM element that the `motion.li` produces.
@@ -25,14 +27,20 @@ const Card = ({ color, setPosition, moveItem, i, children }) => {
   })
 
   return (
-    <>
+    <motion.li
+      initial={{ scale: 0, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      exit={{ scale: 0, opacity: 0 }}
+    >
       <StyledCard
         ref={ref}
         initial={false}
         // If we're dragging, we want to set the zIndex of that item to be on top of the other items.
         animate={isDragging ? onTop : flat}
-        style={{ background: "pink", height: "60px" }}
-        whileHover={{ scale: 1.03 }}
+        whileHover={{
+          scale: 1.03,
+          boxShadow: "0px 10px 30px 7px rgba(0,0,0,0.15)",
+        }}
         whileTap={{ scale: 1.12 }}
         drag="y"
         dragOriginY={dragOriginY}
@@ -55,27 +63,36 @@ const Card = ({ color, setPosition, moveItem, i, children }) => {
           return !isDragging
         }}
       >
-        {children}
+        <h5>{content.title}</h5>
+        <button
+          onClick={() => {
+            dispatch({ type: "delete-card", payload: content.id })
+          }}
+        >
+          Delete
+        </button>
       </StyledCard>
-    </>
+    </motion.li>
   )
 }
 
-const StyledCard = styled(motion.li)`
+const StyledCard = styled(motion.div)`
   padding: 0;
   margin: 0;
   border-radius: 10px;
   margin-bottom: 10px;
   cursor: pointer;
   width: 100%;
+  background: var(--color-primary-light);
   position: relative;
   will-change: transform;
 `
 
 // Spring configs
-const onTop = { zIndex: 1 }
+const onTop = { zIndex: 1, boxShadow: "0px 10px 30px 7px rgba(0,0,0,0.15)" }
 const flat = {
   zIndex: 0,
+  boxShadow: "0px 14px 34px -5px rgba(0,0,0,0.25)",
   transition: { delay: 0.3 },
 }
 
