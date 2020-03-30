@@ -14,6 +14,8 @@ const { primary, accent, success, error, warning } = defaultColors;
 const colors = css`
   :root {
     /* main colors */
+
+  
     --color-primary: ${props => props.theme.colors.primary || primary};
     --color-primary-light: ${props =>
       chroma(props.theme.colors.primary || primary).brighten()};

@@ -24,8 +24,6 @@ const Card = ({ color, setPosition, moveItem, i, children }) => {
     })
   })
 
-  console.log(isDragging)
-
   return (
     <>
       <StyledCard
@@ -71,6 +69,7 @@ const StyledCard = styled(motion.li)`
   cursor: pointer;
   width: 100%;
   position: relative;
+  will-change: transform;
 `
 
 // Spring configs

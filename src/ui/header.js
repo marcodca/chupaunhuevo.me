@@ -1,42 +1,56 @@
 import { Link } from "gatsby"
 import PropTypes from "prop-types"
 import React from "react"
+import styled from "styled-components/macro"
+import { media } from "../styles"
+import egg from "../styles/img/egg.svg"
 
-const Header = ({ siteTitle }) => (
-  <header
-    style={{
-      background: `rebeccapurple`,
-      marginBottom: `1.45rem`,
-    }}
-  >
-    <div
-      style={{
-        margin: `0 auto`,
-        maxWidth: 960,
-        padding: `1.45rem 1.0875rem`,
-      }}
-    >
-      <h1 style={{ margin: 0 }}>
-        <Link
-          to="/"
-          style={{
-            color: `white`,
-            textDecoration: `none`,
-          }}
-        >
-          {siteTitle}
-        </Link>
-      </h1>
-    </div>
-  </header>
+const Header = () => (
+  <Container>
+    <TitleContainer>
+      <img src={egg} />
+      <Title>
+        chupaunhuevo <span>.me</span>
+      </Title>
+    </TitleContainer>
+  </Container>
 )
 
-Header.propTypes = {
-  siteTitle: PropTypes.string,
-}
+const Container = styled.header`
+  background: var(--color-primary);
+  height: var(--space-xxl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--elevation-1);
+  ${media.md`
+    align-items: flex-end;
+    justify-content: flex-start;
+    padding-left: var(--space-md);
+    padding-bottom: var(--space-sm);
+  `}
+`
 
-Header.defaultProps = {
-  siteTitle: ``,
-}
+const Title = styled.h1`
+  margin: 0%;
+  color: white;
+  > span {
+    color: black;
+  }
+`
+
+const TitleContainer = styled(Link)`
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  flex-direction: column;
+  ${media.md`flex-direction: unset;`}
+  > img {
+    width: calc(var(--space-lg) * 1.2);
+    svg {
+      fill: var(--color-base-0);
+    }
+  }
+`
 
 export default Header

@@ -1,5 +1,5 @@
-import { css } from "styled-components";
-import { media } from "./utils";
+import { css } from "styled-components"
+import { media } from "./utils"
 
 const typography = css`
   :root {
@@ -49,6 +49,7 @@ const typography = css`
   h3,
   h4,
   form legend {
+    font-family: var(--font-secondary);
     color: var(--color-text-heading);
     margin-bottom: var(--space-xxs);
     line-height: var(--heading-line-height);
@@ -153,6 +154,6 @@ const typography = css`
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-`;
+`
 
-export default typography;
+export default typography

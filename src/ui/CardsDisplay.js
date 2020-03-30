@@ -2,6 +2,7 @@ import React, { useState, useReducer, useEffect, useRef } from "react"
 import useLocalStorage from "./hooks/useLocalStorage"
 import move from "array-move"
 import findIndex from "./utils/findIndex"
+import AddNewCard from './AddNewCard'
 import Card from "./Card"
 import styled from "styled-components"
 
@@ -20,16 +21,11 @@ const reducer = (state, action) => {
 
 const CardsDisplay = () => {
   const [cardsData, setCardsData] = useLocalStorage("cardsData", [])
-  const [newCard, setNewCard] = useState({ title: "", id: null })
   const [state, dispatch] = useReducer(reducer, cardsData)
 
   useEffect(() => {
     setCardsData(state)
   }, [state])
-
-  //   console.log(state)
-
-  //All mock up
 
   const positions = useRef([]).current
   console.log(positions)
@@ -45,47 +41,57 @@ const CardsDisplay = () => {
 
   return (
     <div>
-      <form>
-        <input
-          value={newCard.title}
-          type="text"
-          onChange={e => {
-            setNewCard({ title: e.target.value })
-          }}
-        />
-
-        <button
-          type="submit"
-          onClick={e => {
-            e.preventDefault()
-
-            dispatch({
-              type: "add-card",
-              payload: { ...newCard, id: Math.floor(Math.random() * 100) },
-            })
-            setNewCard({ title: "", id: null })
-          }}
-        >
-          Create Card
-        </button>
-      </form>
-      <Ul>
-        {state.map((el, i) => (
-          <Card key={el.id} i={i} setPosition={setPosition} moveItem={moveItem}>
-            {el.title}
-          </Card>
-        ))}
-      </Ul>
+      <AddNewCard dispatch={dispatch} hasCards={!!state.length} />
+      {!state.length ? (
+        <NoCardsMessage />
+      ) : (
+        <Ul>
+          {state.map((el, i) => (
+            <Card
+              key={el.id}
+              i={i}
+              setPosition={setPosition}
+              moveItem={moveItem}
+            >
+              {el.title}
+              <br />
+              Top: {i + 1}
+              <br />
+              <button
+                onClick={() => {
+                  dispatch({ type: "delete-card", payload: el.id })
+                }}
+              >
+                Click
+              </button>
+            </Card>
+          ))}
+        </Ul>
+      )}
     </div>
   )
 }
+
+const NoCardsMessage = () => (
+  <NoCardsText>
+    Wow, <br /> <span>Nada</span> te chupa un huevo!
+  </NoCardsText>
+)
+
+const NoCardsText = styled.p`
+  font-size: var(--text-md);
+  color: var(--color-base-5);
+  > span {
+    color: var(--color-base-7);
+    font-weight: 700;
+  }
+`
 
 const Ul = styled.ul`
   list-style: none;
   padding: 0;
   margin: 0;
   position: relative;
-  width: 300px;
 `
 
 export default CardsDisplay

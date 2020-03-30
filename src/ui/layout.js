@@ -1,42 +1,27 @@
-
 import React from "react"
 import PropTypes from "prop-types"
-import { useStaticQuery, graphql } from "gatsby"
+// import { useStaticQuery, graphql } from "gatsby"
 import Header from "./header"
-import CustomThemeProvider from './CustomThemeProvider'
-
+import CustomThemeProvider from "./CustomThemeProvider"
+import styled from "styled-components"
 
 const Layout = ({ children }) => {
-  const data = useStaticQuery(graphql`
-    query SiteTitleQuery {
-      site {
-        siteMetadata {
-          title
-        }
-      }
-    }
-  `)
-
   return (
     <CustomThemeProvider>
-      <Header siteTitle={data.site.siteMetadata.title} />
-      <div
-        style={{
-          margin: `0 auto`,
-          maxWidth: 960,
-          padding: `0 1.0875rem 1.45rem`,
-        }}
-      >
-        <main>{children}</main>
-        <footer>
-          © {new Date().getFullYear()}, Built with
-          {` `}
-          <a href="https://www.gatsbyjs.org">Gatsby</a>
-        </footer>
-      </div>
+      <Header siteTitle={"title"} />
+      <Container>{children}</Container>
     </CustomThemeProvider>
   )
 }
+
+const Container = styled.main`
+  margin: 0 auto;
+  max-width: 960px;
+  text-align: center;
+  min-height: 70vh;
+  border-radius: 5px;
+  padding: var(--space-md);
+`
 
 Layout.propTypes = {
   children: PropTypes.node.isRequired,

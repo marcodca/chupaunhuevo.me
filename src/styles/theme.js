@@ -1,36 +1,26 @@
-export const themeLight = {
+export default {
   colors: {
-    primary: "#f38181",
-    accent: "#fce38a",
+    primary: "#ef962d",
+    accent: "#5a3f11",
     success: "#88c459",
     error: "#f5414f",
     warning: "#ffd137",
-    base: {
-      initial: "#ffffff",
-      final: "#000000"
-    }
   },
   fonts: {
-    primary: "sans-serif",
-    secondary: "serif"
+    primary: "Actor",
+    secondary: "Kadwa",
   },
-  isDark: false
-};
-export const themeDark = {
-  colors: {
-    primary: "#f38181",
-    accent: "#fce38a",
-    success: "#88c459",
-    error: "#f5414f",
-    warning: "#ffd137",
-    base: {
-      initial: "#15132d",
-      final: "#ffffff"
-    }
+}
+
+export const themeLightColors = {
+  base: {
+    initial: "#ffffff",
+    final: "#000000",
   },
-  fonts: {
-    primary: "sans-serif",
-    secondary: "serif"
+}
+export const themeDarkColors = {
+  base: {
+    initial: "#15132d",
+    final: "#ffffff",
   },
-  isDark: true
-};
+}
