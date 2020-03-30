@@ -52,6 +52,7 @@ const Input = styled.input`
   height: var(--space-lg);
   border-radius: 5px;
   background: var(--color-primary-bg);
+  color: var(--color-base-7);
   padding-left: var(--space-sm);
   font-size: var(--text-md);
   border: 0;
@@ -61,6 +62,7 @@ const Input = styled.input`
   }
 `
 const Button = styled.button`
+  appearance: none;
   font-size: var(--text-md);
   height: var(--space-lg);
   background: var(--color-primary);
@@ -69,7 +71,7 @@ const Button = styled.button`
   border-radius: 0 5px 5px 0;
   cursor: pointer;
   &:focus {
-    outline: 2px solid var(--color-primary-dark);
+    border: 2px solid var(--color-primary-dark);
   }
 `
 

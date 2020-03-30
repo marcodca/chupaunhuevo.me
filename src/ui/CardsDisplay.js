@@ -1,4 +1,4 @@
-import React, { useState, useReducer, useEffect, useRef } from "react"
+import React, { useReducer, useEffect, useLayoutEffect, useRef } from "react"
 import useLocalStorage from "./hooks/useLocalStorage"
 import move from "array-move"
 import findIndex from "./utils/findIndex"
@@ -23,7 +23,7 @@ const CardsDisplay = () => {
   const [cardsData, setCardsData] = useLocalStorage("cardsData", [])
   const [state, dispatch] = useReducer(reducer, cardsData)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setCardsData(state)
   }, [state])
 
