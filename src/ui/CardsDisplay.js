@@ -49,6 +49,7 @@ const CardsDisplay = () => {
   return (
     <>
       <AddNewCard dispatch={dispatch} hasCards={!!cards.length} />
+      <h3>Cosas que me chupan un huevo:</h3>
       {!cards.length ? (
         <NoCardsMessage />
       ) : (

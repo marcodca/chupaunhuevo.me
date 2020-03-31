@@ -24,10 +24,11 @@ const Container = styled.header`
   justify-content: center;
   box-shadow: var(--elevation-1);
   ${media.md`
-    align-items: flex-end;
+  height: calc(var(--space-xl) * 1.2);
+    /* align-items: flex-end; */
     justify-content: flex-start;
-    padding-left: var(--space-md);
-    padding-bottom: var(--space-sm);
+    /* padding-left: var(--space-md);
+    padding-bottom: var(--space-sm); */
   `}
 `
 
@@ -46,7 +47,7 @@ const TitleContainer = styled(Link)`
   flex-direction: column;
   ${media.md`flex-direction: unset;`}
   > img {
-    width: calc(var(--space-lg) * 1.2);
+    width: calc(var(--space-lg) * 1.4);
     svg {
       fill: var(--color-base-0);
     }

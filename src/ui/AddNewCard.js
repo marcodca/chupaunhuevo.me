@@ -1,9 +1,12 @@
 import React, { useState, useRef, useEffect } from "react"
 import { v4 as uuid } from "uuid"
 import styled from "styled-components"
+import { motion } from "framer-motion"
+import tick from "../styles/img/tick.svg"
 
 const AddNewCard = ({ dispatch, hasCards }) => {
   const [newCard, setNewCard] = useState({ title: "", id: null })
+  const [isTickShown, setIsTickShown] = useState(false)
 
   const handleInputChange = e => {
     let { value } = e.target
@@ -21,8 +24,7 @@ const AddNewCard = ({ dispatch, hasCards }) => {
 
   return (
     <>
-      <h4> Agregá algo {hasCards && "más"} que te chupe un huevo</h4>
-      <form>
+      <form style={{ position: "relative" }}>
         <Input
           ref={inputRef}
           value={newCard.title}
@@ -30,6 +32,7 @@ const AddNewCard = ({ dispatch, hasCards }) => {
           onChange={handleInputChange}
         />
         <Button
+          disabled={!newCard.title.trim().length}
           type="submit"
           onClick={e => {
             e.preventDefault()
@@ -39,10 +42,21 @@ const AddNewCard = ({ dispatch, hasCards }) => {
               payload: { ...newCard, id: uuid() },
             })
             setNewCard({ title: "", id: null })
+            setIsTickShown(true)
+            setTimeout(() => {
+              setIsTickShown(false)
+            }, 600)
+            inputRef.current.focus()
           }}
         >
           OK
         </Button>
+        <Tick
+          src={tick}
+          variants={tickVariants}
+          initial={!isTickShown ? "shown" : "hidden"}
+          animate={!isTickShown ? "hidden" : "shown"}
+        />
       </form>
     </>
   )
@@ -73,6 +87,21 @@ const Button = styled.button`
   &:focus {
     border: 2px solid var(--color-primary-dark);
   }
+  &:disabled {
+    opacity: 0.7;
+    cursor: unset;
+  }
 `
+
+const Tick = styled(motion.img)`
+  width: var(--space-md);
+  position: absolute;
+  margin-left: var(--space-xxs);
+  margin-top: var(--space-sm);
+`
+const tickVariants = {
+  shown: { scale: 1, opacity: 1 },
+  hidden: { scale: 0, opacity: 0 },
+}
 
 export default AddNewCard

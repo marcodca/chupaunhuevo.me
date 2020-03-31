@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from "react"
 import { motion, useMotionValue } from "framer-motion"
-import chroma from "chroma-js"
 import styled from "styled-components"
+import eggBroken from "../styles/img/egg-broken.svg"
+import { media } from "../styles"
 
 //As shown in framer-motion official example: https://codesandbox.io/s/framer-motion-drag-to-reorder-pkm1k
 
@@ -33,6 +34,7 @@ const Card = ({ setPosition, moveItem, i, content, dispatch }) => {
       exit={{ scale: 0, opacity: 0 }}
     >
       <StyledCard
+        index={i + 1}
         ref={ref}
         initial={false}
         // If we're dragging, we want to set the zIndex of that item to be on top of the other items.
@@ -63,14 +65,16 @@ const Card = ({ setPosition, moveItem, i, content, dispatch }) => {
           return !isDragging
         }}
       >
+        <IndexDisplay>{i + 1}</IndexDisplay>
         <h5>{content.title}</h5>
-        <button
+        <Button
           onClick={() => {
             dispatch({ type: "delete-card", payload: content.id })
           }}
         >
-          Delete
-        </button>
+          <img src={eggBroken} />
+          Borrar
+        </Button>
       </StyledCard>
     </motion.li>
   )
@@ -80,12 +84,72 @@ const StyledCard = styled(motion.div)`
   padding: 0;
   margin: 0;
   border-radius: 10px;
-  margin-bottom: 10px;
-  cursor: pointer;
+  margin-bottom: var(--space-lg);
+  height: ${props => {
+    switch (props.index) {
+      case 1:
+        return "calc(var(--space-xxl) * 1.4)"
+      case 2:
+        return "calc(var(--space-xxl) * 1.25)"
+      case 3:
+        return "calc(var(--space-xxl) * 1.12)"
+      default:
+        return "var(--space-xxl)"
+    }
+  }};
+  cursor: -webkit-grab;
+  &:active {
+    cursor: -webkit-grabbing;
+  }
   width: 100%;
   background: var(--color-primary-light);
   position: relative;
   will-change: transform;
+  color: var(--color-accent-dark);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  h5 {
+    font-size: var(--text-md);
+    margin: 0;
+    margin-left: var(--space-md);
+    ${media.md`
+    margin-left: var(--space-xxl);
+    `}
+    text-transform: capitalize;
+  }
+`
+
+const IndexDisplay = styled.span`
+  position: absolute;
+  top: calc(var(--space-xs) * -1);
+  left: calc(var(--space-xs) * -1);
+  font-size: var(--text-xxl);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: calc(var(--space-md) * 0.7);
+  height: var(--space-md);
+  border-radius: 50%/60% 60% 40% 40%;
+  border: solid 7px var(--color-base-0);
+  background: var(--color-primary);
+`
+
+const Button = styled.button`
+  appearance: none;
+  cursor: pointer;
+  width: var(--space-xxl);
+  background: var(--color-primary);
+  border: 2px solid var(--color-primary-dark);
+  border-radius: 0 10px 10px 0;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  img {
+    width: var(--space-lg);
+  }
 `
 
 // Spring configs

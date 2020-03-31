@@ -1,9 +1,10 @@
 import React from "react"
 import PropTypes from "prop-types"
 // import { useStaticQuery, graphql } from "gatsby"
-import Header from "./header"
+import Header from "./Header"
 import CustomThemeProvider from "./CustomThemeProvider"
 import styled from "styled-components"
+import { media } from "../styles"
 
 const Layout = ({ children }) => {
   return (
@@ -21,6 +22,10 @@ const Container = styled.main`
   min-height: 70vh;
   border-radius: 5px;
   padding: var(--space-md);
+  margin-top: var(--space-lg);
+  ${media.md`
+  margin-top: 0;
+  `}
 `
 
 Layout.propTypes = {
