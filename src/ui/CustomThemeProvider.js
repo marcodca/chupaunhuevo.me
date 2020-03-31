@@ -9,7 +9,7 @@ import egg from "../styles/img/egg.svg"
 import { motion } from "framer-motion"
 
 const CustomThemeProvider = ({ children }) => {
-  
+
   const [isThemeDark, setIsThemeDark] = useLocalStorage("isDarkTheme", {
     value: false,
     isFirstTime: true,
@@ -61,8 +61,8 @@ const CustomThemeProvider = ({ children }) => {
 
 const Switch = styled.div`
   position: absolute;
-  right: var(--space-xs);
-  top: calc(var(--space-xxl) * 1.15);
+  left: var(--space-xs);
+  top: calc(var(--space-xxl) * 1.13);
   width: var(--space-xxl);
   height: var(--space-lg);
   border-radius: var(--space-md);
@@ -81,6 +81,8 @@ const Switch = styled.div`
   }
   ${media.md`
   top: calc(var(--space-xxl) * 1.2);
+  left: unset;
+  right: var(--space-xs);
   `}
 `
 
