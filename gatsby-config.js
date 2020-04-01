@@ -1,5 +1,3 @@
-const chroma = require('chroma-js');
-const mainColor = "#ef962d"
 
 module.exports = {
   siteMetadata: {
@@ -18,8 +16,8 @@ module.exports = {
         name: `chupaunhuevo.me`,
         short_name: `chupaunhuevo.me`,
         start_url: `/`,
-        background_color: chroma(mainColor).alpha(0.2),
-        theme_color: mainColor,
+        background_color: "#ef962d33",
+        theme_color: "#ef962d",
         display: `standalone`,
         icons: [
           {
