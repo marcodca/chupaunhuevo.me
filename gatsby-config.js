@@ -1,5 +1,5 @@
-import { theme } from "./src/styles"
-import chroma from "chroma-js"
+const  theme = require('./src/styles/theme.js')
+const chroma = require('chroma-js');
 
 module.exports = {
   siteMetadata: {
