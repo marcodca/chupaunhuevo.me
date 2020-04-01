@@ -23,11 +23,12 @@ const Container = styled.main`
   margin: 0 auto;
   max-width: 960px;
   text-align: center;
-  min-height: 75vh;
+  min-height: calc(100vh - (var(--space-xxl) * 2.2));
   border-radius: 5px;
   padding: var(--space-md);
   margin-top: var(--space-lg);
   ${media.md`
+  min-height: calc( 100vh - ((var(--space-xl) * 2) + var(--space-lg)) );
   margin-top: 0;
   `}
 `

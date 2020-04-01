@@ -17,8 +17,6 @@ const Container = styled.footer`
   height: var(--space-lg);
   background: var(--color-primary-light);
   margin: 0;
-  /* position: fixed; */
-  bottom: 0;
   box-shadow: 0 0 0 10px var(--color-primary),
     0 0 0 15px var(--color-primary-bg);
   display: flex;
