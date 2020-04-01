@@ -72,7 +72,7 @@ const Card = ({ setPosition, moveItem, i, content, dispatch }) => {
             dispatch({ type: "delete-card", payload: content.id })
           }}
         >
-          <img src={eggBroken} alt=""/>
+          <img src={eggBroken} alt="" />
           Borrar
         </Button>
       </StyledCard>
@@ -116,7 +116,9 @@ const StyledCard = styled(motion.div)`
     ${media.md`
     margin-left: var(--space-xxl);
     `}
-    text-transform: capitalize;
+    &::first-letter {
+      text-transform: uppercase;
+    }
   }
 `
 

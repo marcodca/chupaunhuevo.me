@@ -46,7 +46,6 @@ const AddNewCard = ({ dispatch, hasCards }) => {
             setTimeout(() => {
               setIsTickShown(false)
             }, 600)
-            inputRef.current.focus()
           }}
         >
           OK
