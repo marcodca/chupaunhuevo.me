@@ -1,3 +1,6 @@
+import { theme } from "./src/styles"
+import chroma from "chroma-js"
+
 module.exports = {
   siteMetadata: {
     title: `chupaunhuevo.me`,
@@ -15,15 +18,23 @@ module.exports = {
         name: `chupaunhuevo.me`,
         short_name: `chupaunhuevo.me`,
         start_url: `/`,
-        background_color: `#663399`,
-        theme_color: `#663399`,
-        display: `minimal-ui`,
-        // icon: `src/images/gatsby-icon.png`, // This path is relative to the root of the site.
+        background_color: chroma(theme.colors.primary).alpha(0.2),
+        theme_color: theme.colors.primary,
+        display: `standalone`,
+        icons: [
+          {
+            src: "/icons/192x192.png",
+            sizes: "192x192",
+            type: "image/png"
+          },
+          {
+            src: "/icons/512x512.png",
+            sizes: "512x512",
+            type: "image/png"
+          }
+        ]
       },
     },
-    
-    // this (optional) plugin enables Progressive Web App + Offline functionality
-    // To learn more, visit: https://gatsby.dev/offline
-    // `gatsby-plugin-offline`,
+    `gatsby-plugin-offline`,
   ],
 }
