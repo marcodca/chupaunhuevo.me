@@ -46,8 +46,8 @@ const CustomThemeProvider = ({ children }) => {
           setIsThemeDark(prev => ({ value: !prev.value, isFirstTime: false }))
         }}
       >
-        <img src={egg} />
-        <img src={egg} />
+        <img src={egg} alt=""/>
+        <img src={egg} alt=""/>
         <Selector
           variants={selectorVariants}
           initial={isThemeDark.value ? "dark" : "light"}

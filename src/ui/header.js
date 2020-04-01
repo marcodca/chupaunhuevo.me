@@ -4,17 +4,24 @@ import React from "react"
 import styled from "styled-components/macro"
 import { media } from "../styles"
 import egg from "../styles/img/egg.svg"
+import chroma from "chroma-js"
 
 const Header = () => (
-  <Container>
+  <Container to="/">
     <TitleContainer>
-      <img src={egg} />
+      <img src={egg} alt=""/>
       <Title>
         chupaunhuevo <span>.me</span>
       </Title>
     </TitleContainer>
   </Container>
 )
+
+const colors = chroma.scale([chroma("#ef962d").brighten(), "#ef962d"]).colors(5)
+
+const gradient = ["10%", "25%", "0%", "50%", "90%"]
+
+const colorArr = gradient.map((el, i, arr) => [colors[i], arr[i - 1] || "", el])
 
 const Container = styled.header`
   background: var(--color-primary);
@@ -25,10 +32,11 @@ const Container = styled.header`
   box-shadow: var(--elevation-1);
   ${media.md`
   height: calc(var(--space-xl) * 1.2);
-    /* align-items: flex-end; */
     justify-content: flex-start;
-    /* padding-left: var(--space-md);
-    padding-bottom: var(--space-sm); */
+    background: linear-gradient(
+    -45deg,
+    ${colorArr.map(([c, f, s]) => `${c} ${f} ${s}`).toString()}
+  );
   `}
 `
 

@@ -72,7 +72,7 @@ const Card = ({ setPosition, moveItem, i, content, dispatch }) => {
             dispatch({ type: "delete-card", payload: content.id })
           }}
         >
-          <img src={eggBroken} />
+          <img src={eggBroken} alt=""/>
           Borrar
         </Button>
       </StyledCard>

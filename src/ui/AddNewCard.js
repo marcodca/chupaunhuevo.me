@@ -52,6 +52,7 @@ const AddNewCard = ({ dispatch, hasCards }) => {
           OK
         </Button>
         <Tick
+          alt=""
           src={tick}
           variants={tickVariants}
           initial={!isTickShown ? "shown" : "hidden"}
