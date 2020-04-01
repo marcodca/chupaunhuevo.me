@@ -3,8 +3,10 @@ import { v4 as uuid } from "uuid"
 import styled from "styled-components"
 import { motion } from "framer-motion"
 import tick from "../styles/img/tick.svg"
+import useSound from "use-sound"
+import cluck from "../styles/sounds/cluck.mp3"
 
-const AddNewCard = ({ dispatch, hasCards }) => {
+const AddNewCard = ({ dispatch }) => {
   const [newCard, setNewCard] = useState({ title: "", id: null })
   const [isTickShown, setIsTickShown] = useState(false)
 
@@ -21,6 +23,9 @@ const AddNewCard = ({ dispatch, hasCards }) => {
     if (!inputRef.current) return
     inputRef.current.focus()
   }, [])
+
+  //Sound effect
+  const [playCluck] = useSound(cluck, { volume: 0.1 })
 
   return (
     <>
@@ -46,6 +51,7 @@ const AddNewCard = ({ dispatch, hasCards }) => {
             setTimeout(() => {
               setIsTickShown(false)
             }, 600)
+            playCluck()
           }}
         >
           OK

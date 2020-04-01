@@ -27,6 +27,7 @@
     "styled-normalize": "^8.0.7",
     "typeface-actor": "0.0.72",
     "typeface-kadwa": "0.0.72",
+    "use-sound": "^1.0.1",
     "uuid": "^7.0.2"
   },
   "devDependencies": {

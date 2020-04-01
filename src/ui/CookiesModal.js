@@ -29,7 +29,7 @@ const CookiesModal = () => {
             <span alt="cookie emoji">🍪</span>
             <b>Atención: </b> Esta página utiliza cookies, y le{" "}
             <b>chupa un huevo</b> si estas de acuerdo a no con{" "}
-            <Link to="/politica-cookies">su política</Link> de las mismas
+            <Link to="/politica-cookies">su política</Link>
           </p>
           <span
             onClick={() => {

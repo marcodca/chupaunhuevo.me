@@ -9,7 +9,7 @@ import chroma from "chroma-js"
 const Header = () => (
   <Container to="/">
     <TitleContainer>
-      <img src={egg} alt=""/>
+      <img src={egg} alt="" />
       <Title>
         chupaunhuevo <span>.me</span>
       </Title>
@@ -46,6 +46,8 @@ const Title = styled.h1`
   > span {
     color: black;
   }
+  font-size: 1.7em;
+  ${media.md`font-size: 2em;`}
 `
 
 const TitleContainer = styled(Link)`

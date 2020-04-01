@@ -7,9 +7,10 @@ import styled from "styled-components"
 import { media } from "../styles"
 import egg from "../styles/img/egg.svg"
 import { motion } from "framer-motion"
+import useSound from "use-sound"
+import switchSound from "../styles/sounds/switch.mp3"
 
 const CustomThemeProvider = ({ children }) => {
-
   const [isThemeDark, setIsThemeDark] = useLocalStorage("isDarkTheme", {
     value: false,
     isFirstTime: true,
@@ -38,16 +39,21 @@ const CustomThemeProvider = ({ children }) => {
     colors: { ...theme.colors, base: themeLightColors.base },
   }
 
+  //Sound effect
+
+  const [playSwitch] = useSound(switchSound, { volume: 0.25 })
+
   return (
     <ThemeProvider theme={isThemeDark.value ? themeDark : themeLight}>
       <GlobalStyle />
       <Switch
         onClick={() => {
           setIsThemeDark(prev => ({ value: !prev.value, isFirstTime: false }))
+          playSwitch();
         }}
       >
-        <img src={egg} alt=""/>
-        <img src={egg} alt=""/>
+        <img src={egg} alt="" />
+        <img src={egg} alt="" />
         <Selector
           variants={selectorVariants}
           initial={isThemeDark.value ? "dark" : "light"}

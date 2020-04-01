@@ -3,6 +3,8 @@ import { motion, useMotionValue } from "framer-motion"
 import styled from "styled-components"
 import eggBroken from "../styles/img/egg-broken.svg"
 import { media } from "../styles"
+import useSound from "use-sound"
+import crack from "../styles/sounds/crack.mp3"
 
 //As shown in framer-motion official example: https://codesandbox.io/s/framer-motion-drag-to-reorder-pkm1k
 
@@ -26,6 +28,9 @@ const Card = ({ setPosition, moveItem, i, content, dispatch }) => {
       top: ref.current.offsetTop,
     })
   })
+
+  //Sound effect
+  const [playCrack] = useSound(crack, { volume: 0.25 })
 
   return (
     <motion.li
@@ -70,6 +75,7 @@ const Card = ({ setPosition, moveItem, i, content, dispatch }) => {
         <Button
           onClick={() => {
             dispatch({ type: "delete-card", payload: content.id })
+            playCrack()
           }}
         >
           <img src={eggBroken} alt="" />
