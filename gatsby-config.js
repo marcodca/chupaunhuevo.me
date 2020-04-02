@@ -19,18 +19,7 @@ module.exports = {
         background_color: "#ef962d33",
         theme_color: "#ef962d",
         display: `standalone`,
-        icons: [
-          {
-            src: "icons/192x192.png",
-            sizes: "192x192",
-            type: "image/png"
-          },
-          {
-            src: "icons/512x512.png",
-            sizes: "512x512",
-            type: "image/png"
-          }
-        ]
+        icon: `src/styles/img/icon.png`
       },
     },
     `gatsby-plugin-offline`,
