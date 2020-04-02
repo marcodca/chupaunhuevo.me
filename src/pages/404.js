@@ -8,7 +8,7 @@ const NotFoundPage = () => (
   <Layout>
     <SEO title="404: Not found" />
     <Title>
-      <span>4</span> <img src={egg} alt="" /> <img src={egg} alt="" />
+      <span>4</span> <img src={egg} alt="" /> <span>4</span>
     </Title>
     <h2>Not found</h2>
     <p>La dirección que buscas no existe.</p>
