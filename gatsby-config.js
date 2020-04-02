@@ -4,6 +4,7 @@ module.exports = {
     title: `chupaunhuevo.me`,
     description: `La plataforma para llevar el registro de las cosas que te chupan un huevo`,
     author: `Marco de Cara`,
+    image: "https://i.ibb.co/3yLRXMh/screen.png"
   },
   plugins: [
     `gatsby-plugin-styled-components`,
