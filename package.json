@@ -1,6 +1,6 @@
 {
   "name": "chupaunhuevo.me",
-  "private": true,
+  "private": false,
   "description": "La plataforma para llevar el registro de las cosas que te chupan un huevo",
   "version": "0.1.0",
   "author": "Marco de Cara <https://github.com/marcodca>",
@@ -48,9 +48,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/marcodca/chupaunhuevo.net"
+    "url": "https://github.com/marcodca/chupaunhuevo.me"
   },
   "bugs": {
-    "url": "https://github.com/marcodca/chupaunhuevo.net/issues"
+    "url": "https://github.com/marcodca/chupaunhuevo.me/issues"
   }
 }
