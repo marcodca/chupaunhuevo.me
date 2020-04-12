@@ -1,5 +1,13 @@
-import React, { useReducer, useRef, useState, useEffect } from "react"
+import React, {
+  useReducer,
+  useRef,
+  useState,
+  useEffect,
+  useLayoutEffect,
+} from "react"
+import useLocalStorage from "./hooks/useLocalStorage"
 import { v4 as uuid } from "uuid"
+import styled from "styled-components"
 
 const defaultGame = {
   hasStarted: false,
@@ -84,22 +92,20 @@ const gameReducer = (state, action) => {
 }
 
 const MoscaCounter = () => {
-  const [game, dispatch] = useReducer(gameReducer, defaultGame)
+  const [localGame, setLocalGame] = useLocalStorage("localGame", defaultGame)
+
+  const [game, dispatch] = useReducer(gameReducer, localGame)
+
+  //Refs
   const selectNrOfPlayersRef = useRef()
-  const playerNameRef = useRef()
   const playerAbandonRef = useRef()
+  const scoreRef = useRef()
 
   const [currentHand, setCurrentHand] = useState([])
 
-  useEffect(() => {
-    setCurrentHand(
-      game.players.map(player => ({ userId: player.id, value: 0 }))
-    )
-  }, [game.players])
-
   const SelectNrOfPlayersForm = () => (
     <form>
-      <label>Number of players:</label>
+      <label>Cantidad de jugadores:</label>
       <select ref={selectNrOfPlayersRef}>
         {[2, 3, 4, 5, 6].map(nr => (
           <option key={nr} value={nr}>
@@ -140,15 +146,11 @@ const MoscaCounter = () => {
       return acc
     }, 0)
 
-    console.log("currentHandTotal", currentHandTotal)
-
     return negativeCurrentTotalHandValue === -5 ||
       currentHandTotal === game.players.length - 1
       ? false
       : true
   }
-
-  console.log(game)
 
   const shouldBeDealerThisHand = player => {
     const findLastDealerIndex = () => {
@@ -156,8 +158,6 @@ const MoscaCounter = () => {
       return index === game.players.length - 1 ? -1 : index
     }
     const lastDealerIndex = findLastDealerIndex()
-
-    console.log("lastDealerIndex", lastDealerIndex)
 
     const nextHandDealerIndex = game.players.findIndex(
       (player, i) => i > lastDealerIndex && !player.hasLost
@@ -169,6 +169,16 @@ const MoscaCounter = () => {
     return player.id === game.players[nextHandDealerIndex].id ? true : false
   }
 
+  //Effects
+
+  //When a player is added set it to the current hand
+  useEffect(() => {
+    setCurrentHand(
+      game.players.map(player => ({ userId: player.id, value: 0 }))
+    )
+  }, [game.players])
+
+  //Check who is gonna be the dealer
   useEffect(() => {
     dispatch({
       type: "SET_DEALER",
@@ -179,12 +189,21 @@ const MoscaCounter = () => {
     })
   }, [game.nrOfHandsPlayed])
 
+  //Update the score scroll
+  useEffect(() => {
+    if (!scoreRef.current) return
+    scoreRef.current.scrollTo({
+      top: scoreRef.current.scrollHeight,
+      behavior: "smooth",
+    })
+  }, [localGame])
+
+  //Check if there's a winner
   useEffect(() => {
     const winners = game.players.filter(player => player.hasWon)
 
     const winnerByAbandon =
       game.players.length > 1 && game.players.filter(player => !player.hasLost)
-    console.log("winnerByAbandon", winnerByAbandon)
 
     if (winners.length) {
       dispatch({
@@ -202,43 +221,84 @@ const MoscaCounter = () => {
     }
   }, [game.nrOfHandsPlayed, game.players])
 
+  //Each time our component state changes, we make the corresponding update to local storage
+  useLayoutEffect(() => {
+    setLocalGame(game)
+  }, [game])
+
+  //Component for adding players
+
+  const AddPlayer = () => {
+    const [nameInput, setNameInput] = useState("")
+    const inputRef = useRef()
+    const handleInputChange = e => void setNameInput(e.target.value)
+
+    useEffect(() => {
+      inputRef.current.focus()
+    })
+
+    return (
+      <form>
+        <label>Nombre jugador {localGame.players.length + 1}</label>
+        <input
+          ref={inputRef}
+          type="text"
+          value={nameInput}
+          onChange={handleInputChange}
+        ></input>
+        <button
+          type="submit"
+          disabled={!nameInput.trim().length}
+          onClick={e => {
+            e.preventDefault()
+            dispatch({
+              type: "ADD_PLAYER",
+              payload: nameInput.trim(),
+            })
+            setNameInput("")
+          }}
+        >
+          Agregar jugador
+        </button>
+      </form>
+    )
+  }
+
   return (
-    <>
-      <h2>Counter:</h2>
+    <Container>
+      <h2>Mosc-counter:</h2>
       {
         //Todo check for more than one winner
       }
-      {game.hasFinished && (
-        <h3>Tenemos un ganador/a!: {game.winner[0].name}</h3>
+      {localGame.hasFinished && (
+        <h3>Tenemos un ganador/a!: {localGame.winner[0].name}</h3>
       )}
 
-      {!game.hasStarted ? (
+      {!localGame.hasStarted ? (
         <SelectNrOfPlayersForm />
-      ) : game.players.length < game.nrOfPlayers ? (
-        <form>
-          <label>Nombre jugador {game.players.length + 1}</label>
-          <input type="text" ref={playerNameRef}></input>
-          <button
-            type="submit"
-            onClick={e => {
-              e.preventDefault()
-              dispatch({
-                type: "ADD_PLAYER",
-                payload: playerNameRef.current.value.trim(),
-              })
-              playerNameRef.current.value = ""
-            }}
-          >
-            Agregar jugador
-          </button>
-        </form>
+      ) : localGame.players.length < localGame.nrOfPlayers ? (
+        <AddPlayer />
       ) : (
         <div>
-          Mano numero: {game.nrOfHandsPlayed + 1}, reparte{" "}
-          {!game.hasFinished &&
-            game.players.find(player => player.isDealer).name}
+          Mano numero: {localGame.nrOfHandsPlayed + 1}, reparte{" "}
+          {!localGame.hasFinished &&
+            localGame.players.find(player => player.isDealer).name}
+          <Names>
+            {localGame.players.map(player => (
+              <li key={player.id}>{player.name}</li>
+            ))}
+          </Names>
+          <ScoreDisplay ref={scoreRef}>
+            {localGame.players.map(player => (
+              <UlScore key={player.id}>
+                {player.score.map((score, i) => (
+                  <li key={i}>{score}</li>
+                ))}
+              </UlScore>
+            ))}
+          </ScoreDisplay>
           <ul>
-            {game.players.map(player => (
+            {localGame.players.map(player => (
               <li key={player.id}>
                 {player.name}: {player.score[player.score.length - 1]}{" "}
                 <select
@@ -261,6 +321,8 @@ const MoscaCounter = () => {
                       value={option.value}
                       disabled={
                         (option.value === 1 && player.isDealer) ||
+                        (option.value === 1 &&
+                          player.score[player.score.length - 1] <= 5) ||
                         (option.value === 1 && player.hasSkipped === "twice") ||
                         (option.value === 0 && !player.isDealer)
                       }
@@ -276,7 +338,7 @@ const MoscaCounter = () => {
             onClick={() => {
               dispatch({
                 type: "NEW_HAND_SUBMITTED",
-                payload: game.players.map((player, i) => {
+                payload: localGame.players.map((player, i) => {
                   const lastScore = player.score[player.score.length - 1]
 
                   const currentHandValue = currentHand[i].value
@@ -301,7 +363,10 @@ const MoscaCounter = () => {
                 }),
               })
               setCurrentHand(
-                game.players.map(player => ({ userId: player.id, value: 0 }))
+                localGame.players.map(player => ({
+                  userId: player.id,
+                  value: 0,
+                }))
               )
             }}
             disabled={validateSubmitHand()}
@@ -312,7 +377,7 @@ const MoscaCounter = () => {
             Actions:
             <label>Jugador abandona</label>
             <select ref={playerAbandonRef}>
-              {game.players.map(player => (
+              {localGame.players.map(player => (
                 <option
                   key={player.id}
                   value={player.id}
@@ -324,15 +389,15 @@ const MoscaCounter = () => {
             </select>
             <button
               onClick={() => {
-                const playerToAbandonRef = game.players.find(
+                const playerToAbandonRef = localGame.players.find(
                   player => player.id === playerAbandonRef.current.value
                 )
-                const playerToAbandonIndex = game.players.findIndex(
+                const playerToAbandonIndex = localGame.players.findIndex(
                   player => player.id === playerToAbandonRef.id
                 )
                 const playerToAbandon = { ...playerToAbandonRef, hasLost: true }
 
-                const payload = [...game.players]
+                const payload = [...localGame.players]
                 payload[playerToAbandonIndex] = playerToAbandon
 
                 dispatch({
@@ -354,8 +419,53 @@ const MoscaCounter = () => {
           </div>
         </div>
       )}
-    </>
+    </Container>
   )
 }
+//Styled components
+
+const Container = styled.div`
+  button {
+    display: block;
+    margin: 0 auto;
+    margin-top: var(--space-md);
+    appearance: none;
+    background-color: var(--color-primary-light);
+    outline: none;
+    border: 2px solid var(--color-primary-dark);
+    border-radius: 5px;
+    min-width: var(--space-xxl);
+  }
+`
+
+const Names = styled.ul`
+  padding: 0;
+  list-style: none;
+  display: flex;
+  /* margin: 0; */
+  justify-content: center;
+  li {
+    width: var(--space-xl);
+  }
+`
+
+const ScoreDisplay = styled.div`
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  width: fit-content;
+  height: 75px;
+  overflow-y: scroll;
+`
+
+const UlScore = styled.ul`
+  text-align: center;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  li {
+    width: var(--space-xl);
+  }
+`
 
 export default MoscaCounter
