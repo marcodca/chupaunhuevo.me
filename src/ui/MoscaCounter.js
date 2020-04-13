@@ -105,9 +105,10 @@ const MoscaCounter = () => {
 
   const SelectNrOfPlayersForm = () => (
     <form>
+      <h4>Nueva partida</h4>
       <label>Cantidad de jugadores:</label>
       <select ref={selectNrOfPlayersRef}>
-        {[2, 3, 4, 5, 6].map(nr => (
+        {[2, 3, 4, 5].map(nr => (
           <option key={nr} value={nr}>
             {nr}
           </option>
@@ -130,8 +131,6 @@ const MoscaCounter = () => {
   )
 
   const validateSubmitHand = () => {
-    //to-do: edge case, all skip but dealer
-
     const negativeCurrentHandValues = currentHand.filter(el => el.value < 0)
 
     const negativeCurrentTotalHandValue = negativeCurrentHandValues
@@ -231,7 +230,11 @@ const MoscaCounter = () => {
   const AddPlayer = () => {
     const [nameInput, setNameInput] = useState("")
     const inputRef = useRef()
-    const handleInputChange = e => void setNameInput(e.target.value)
+    const handleInputChange = e => {
+      const { value } = e.target
+      if (value.length >= 8) return
+      setNameInput(e.target.value)
+    }
 
     useEffect(() => {
       inputRef.current.focus()
@@ -266,7 +269,6 @@ const MoscaCounter = () => {
 
   return (
     <Container>
-      <h2>Mosc-counter:</h2>
       {
         //Todo check for more than one winner
       }
@@ -280,12 +282,18 @@ const MoscaCounter = () => {
         <AddPlayer />
       ) : (
         <div>
-          Mano numero: {localGame.nrOfHandsPlayed + 1}, reparte{" "}
-          {!localGame.hasFinished &&
-            localGame.players.find(player => player.isDealer).name}
           <Names>
             {localGame.players.map(player => (
-              <li key={player.id}>{player.name}</li>
+              <Name
+                key={player.id}
+                hasSkipped={player.hasSkipped}
+                style={{
+                  color:
+                    player.score[player.score.length - 1] <= 5 ? "red" : "",
+                }}
+              >
+                {player.name}
+              </Name>
             ))}
           </Names>
           <ScoreDisplay ref={scoreRef}>
@@ -297,82 +305,90 @@ const MoscaCounter = () => {
               </UlScore>
             ))}
           </ScoreDisplay>
-          <ul>
-            {localGame.players.map(player => (
-              <li key={player.id}>
-                {player.name}: {player.score[player.score.length - 1]}{" "}
-                <select
-                  disabled={player.hasLost}
-                  value={currentHand.find(el => el.userId === player.id)?.value}
-                  onChange={e => {
-                    e.persist()
-                    setCurrentHand(prev =>
-                      prev.map(elem =>
-                        elem.userId === player.id
-                          ? { ...elem, value: Number(e.target.value) }
-                          : elem
+          <CurrentHandContainer>
+            Mano numero: {localGame.nrOfHandsPlayed + 1}, reparte{" "}
+            {!localGame.hasFinished &&
+              localGame.players.find(player => player.isDealer).name}
+            <ul>
+              {localGame.players.map(player => (
+                <li key={player.id}>
+                  {player.name}: {player.score[player.score.length - 1]}{" "}
+                  <select
+                    disabled={player.hasLost}
+                    value={
+                      currentHand.find(el => el.userId === player.id)?.value
+                    }
+                    onChange={e => {
+                      e.persist()
+                      setCurrentHand(prev =>
+                        prev.map(elem =>
+                          elem.userId === player.id
+                            ? { ...elem, value: Number(e.target.value) }
+                            : elem
+                        )
                       )
-                    )
-                  }}
-                >
-                  {selectOptions.map((option, i) => (
-                    <option
-                      key={i}
-                      value={option.value}
-                      disabled={
-                        (option.value === 1 && player.isDealer) ||
-                        (option.value === 1 &&
-                          player.score[player.score.length - 1] <= 5) ||
-                        (option.value === 1 && player.hasSkipped === "twice") ||
-                        (option.value === 0 && !player.isDealer)
-                      }
-                    >
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </li>
-            ))}
-          </ul>
-          <button
-            onClick={() => {
-              dispatch({
-                type: "NEW_HAND_SUBMITTED",
-                payload: localGame.players.map((player, i) => {
-                  const lastScore = player.score[player.score.length - 1]
+                    }}
+                  >
+                    {selectOptions.map((option, i) => (
+                      <option
+                        key={i}
+                        value={option.value}
+                        disabled={
+                          (option.value === 1 && player.isDealer) ||
+                          (option.value === 1 &&
+                            player.score[player.score.length - 1] <= 5) ||
+                          (option.value === 1 &&
+                            player.hasSkipped === "twice") ||
+                          (option.value === 0 && !player.isDealer)
+                        }
+                      >
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </li>
+              ))}
+            </ul>
+            <button
+              onClick={() => {
+                dispatch({
+                  type: "NEW_HAND_SUBMITTED",
+                  payload: localGame.players.map((player, i) => {
+                    const lastScore = player.score[player.score.length - 1]
 
-                  const currentHandValue = currentHand[i].value
-                  const currentScore = lastScore + currentHandValue
-                  return {
-                    ...player,
-                    score: [
-                      ...player.score,
-                      currentHand[i].userId === player.id && currentScore,
-                    ],
-                    hasWon: currentScore <= 0 ? true : false,
-                    hasLost: currentScore > 30 ? true : player.hasLost,
-                    hasSkipped:
-                      currentHandValue === 1
-                        ? player.hasSkipped === "once"
-                          ? "twice"
-                          : "once"
-                        : player.isDealer
-                        ? player.hasSkipped
-                        : null,
-                  }
-                }),
-              })
-              setCurrentHand(
-                localGame.players.map(player => ({
-                  userId: player.id,
-                  value: 0,
-                }))
-              )
-            }}
-            disabled={validateSubmitHand()}
-          >
-            Terminar mano
-          </button>
+                    const currentHandValue = currentHand[i].value
+                    const currentScore = lastScore + currentHandValue
+                    return {
+                      ...player,
+                      score: [
+                        ...player.score,
+                        currentHand[i].userId === player.id && currentScore,
+                      ],
+                      hasWon: currentScore <= 0 ? true : false,
+                      hasLost: currentScore > 30 ? true : player.hasLost,
+                      hasSkipped:
+                        currentHandValue === 1
+                          ? player.hasSkipped === "once"
+                            ? "twice"
+                            : "once"
+                          : player.isDealer
+                          ? player.hasSkipped
+                          : null,
+                    }
+                  }),
+                })
+                setCurrentHand(
+                  localGame.players.map(player => ({
+                    userId: player.id,
+                    value: 0,
+                  }))
+                )
+              }}
+              disabled={validateSubmitHand()}
+            >
+              Terminar mano
+            </button>
+          </CurrentHandContainer>
           <div>
             Actions:
             <label>Jugador abandona</label>
@@ -436,17 +452,57 @@ const Container = styled.div`
     border-radius: 5px;
     min-width: var(--space-xxl);
   }
+  select {
+    min-width: var(--space-xl);
+    margin-left: var(--space-sm);
+  }
 `
 
 const Names = styled.ul`
   padding: 0;
   list-style: none;
   display: flex;
-  /* margin: 0; */
   justify-content: center;
-  li {
-    width: var(--space-xl);
+  position: relative;
+  &:after {
+    content: "";
+    position: absolute;
+    bottom: -5px;
+    width: 60%;
+    min-width: 240px;
+    max-width: 450px;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 2px;
+    background: var(--color-base-7);
   }
+`
+
+const Name = styled.li`
+  width: var(--space-xl);
+  position: relative;
+  ${props =>
+    props.hasSkipped === "once" &&
+    `
+    &:after {
+    content: "•";
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+    `}
+  ${props =>
+    props.hasSkipped === "twice" &&
+    `
+    &:after {
+    content: "• •";
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+    `}
 `
 
 const ScoreDisplay = styled.div`
@@ -466,6 +522,12 @@ const UlScore = styled.ul`
   li {
     width: var(--space-xl);
   }
+`
+
+const CurrentHandContainer =  styled.div`
+  padding: var(--space-md);
+  background: var(--color-primary-bg);
+  border-radius: 5px;
 `
 
 export default MoscaCounter
