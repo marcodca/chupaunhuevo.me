@@ -300,7 +300,16 @@ const MoscaCounter = () => {
             {localGame.players.map(player => (
               <UlScore key={player.id}>
                 {player.score.map((score, i) => (
-                  <li key={i}>{score}</li>
+                  <li
+                    key={i}
+                    style={{
+                      fontWeight: i === player.score.length - 1 && "bold",
+                      color:
+                        i === player.score.length - 1 && score <= 5 && "red",
+                    }}
+                  >
+                    {score}
+                  </li>
                 ))}
               </UlScore>
             ))}
@@ -309,11 +318,13 @@ const MoscaCounter = () => {
             Mano numero: {localGame.nrOfHandsPlayed + 1}, reparte{" "}
             {!localGame.hasFinished &&
               localGame.players.find(player => player.isDealer).name}
+            .
             <ul>
               {localGame.players.map(player => (
                 <li key={player.id}>
-                  {player.name}: {player.score[player.score.length - 1]}{" "}
+                  <label for="hand-score">{player.name}</label>
                   <select
+                    id="hand-score"
                     disabled={player.hasLost}
                     value={
                       currentHand.find(el => el.userId === player.id)?.value
@@ -456,11 +467,13 @@ const Container = styled.div`
     min-width: var(--space-xl);
     margin-left: var(--space-sm);
   }
+  ul {
+    list-style: none;
+  }
 `
 
 const Names = styled.ul`
   padding: 0;
-  list-style: none;
   display: flex;
   justify-content: center;
   position: relative;
@@ -481,6 +494,7 @@ const Names = styled.ul`
 const Name = styled.li`
   width: var(--space-xl);
   position: relative;
+  text-transform: capitalize;
   ${props =>
     props.hasSkipped === "once" &&
     `
@@ -524,10 +538,12 @@ const UlScore = styled.ul`
   }
 `
 
-const CurrentHandContainer =  styled.div`
+const CurrentHandContainer = styled.div`
   padding: var(--space-md);
   background: var(--color-primary-bg);
   border-radius: 5px;
+  margin: var(--space-md) auto;
+  width: fit-content;
 `
 
 export default MoscaCounter
